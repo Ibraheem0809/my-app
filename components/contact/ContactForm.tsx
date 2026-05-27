@@ -1,51 +1,25 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-
-import { z } from "zod";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-
-import { toast } from "sonner";
-
-const formSchema = z.object({
-  name: z.string().min(2, "Name is required"),
-
-  phone: z.string().min(10, "Valid phone number required"),
-
-  email: z.string().email("Invalid email address"),
-
-  message: z.string().min(10, "Message should be at least 10 characters"),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+import { useContactForm } from "./useContactForm";
 
 export function ContactForm() {
   const {
     register,
     handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-  });
-
-  const onSubmit = async (values: FormValues) => {
-    console.log(values);
-
-    toast.success("Your message has been sent successfully!");
-
-    reset();
-  };
+    formState: { errors },
+    onSubmit,
+    isSubmitting,
+  } = useContactForm();
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      {/* NAME */}
       <div>
         <input
           type="text"
           placeholder="Your Name"
           {...register("name")}
-          className="h-14 w-full rounded-2xl border border-border bg-white px-5 text-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10"
+          className="h-14 w-full rounded-2xl border border-slate-200 bg-white px-5 outline-none transition focus:border-primary"
         />
 
         {errors.name && (
@@ -53,12 +27,13 @@ export function ContactForm() {
         )}
       </div>
 
+      {/* EMAIL */}
       <div>
         <input
           type="email"
           placeholder="Email Address"
           {...register("email")}
-          className="h-14 w-full rounded-2xl border border-border bg-white px-5 text-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10"
+          className="h-14 w-full rounded-2xl border border-slate-200 bg-white px-5 outline-none transition focus:border-primary"
         />
 
         {errors.email && (
@@ -66,12 +41,13 @@ export function ContactForm() {
         )}
       </div>
 
+      {/* PHONE */}
       <div>
         <input
           type="text"
           placeholder="Phone Number"
           {...register("phone")}
-          className="h-14 w-full rounded-2xl border border-border bg-white px-5 text-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10"
+          className="h-14 w-full rounded-2xl border border-slate-200 bg-white px-5 outline-none transition focus:border-primary"
         />
 
         {errors.phone && (
@@ -79,12 +55,13 @@ export function ContactForm() {
         )}
       </div>
 
+      {/* MESSAGE */}
       <div>
         <textarea
           rows={6}
           placeholder="Write your message..."
           {...register("message")}
-          className="w-full rounded-2xl border border-border bg-white p-5 text-sm outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/10"
+          className="w-full rounded-2xl border border-slate-200 bg-white p-5 outline-none transition focus:border-primary"
         />
 
         {errors.message && (
@@ -92,10 +69,11 @@ export function ContactForm() {
         )}
       </div>
 
+      {/* BUTTON */}
       <button
         type="submit"
         disabled={isSubmitting}
-        className="inline-flex w-full items-center justify-center rounded-full bg-gradient-primary px-6 py-3 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-50"
+        className="w-full rounded-2xl bg-[var(--primary)] px-6 py-4 font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isSubmitting ? "Sending..." : "Send Message"}
       </button>

@@ -1,3 +1,5 @@
+// components/cards/TutorCard.tsx
+
 "use client";
 
 import Image from "next/image";
@@ -24,7 +26,7 @@ export default function TutorCard({ tutor, onView }: TutorCardProps) {
         stiffness: 260,
         damping: 20,
       }}
-      className="glass flex flex-col rounded-3xl border border-white/60 p-6 shadow-soft"
+      className="glass flex h-full flex-col rounded-3xl border border-white/60 p-6 shadow-soft"
     >
       {/* Top */}
       <div className="flex items-center gap-4">
@@ -38,7 +40,7 @@ export default function TutorCard({ tutor, onView }: TutorCardProps) {
           />
         </div>
 
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <h3 className="truncate font-display text-lg font-semibold text-foreground">
             {tutor.name}
           </h3>
@@ -86,13 +88,15 @@ export default function TutorCard({ tutor, onView }: TutorCardProps) {
       </ul>
 
       {/* CTA */}
-
-      <button
-        onClick={() => onView?.(tutor)}
-        className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background transition hover:bg-primary"
-      >
-        View Profile
-      </button>
+      <div className="mt-auto pt-6">
+        <button
+          type="button"
+          onClick={() => onView?.(tutor)}
+          className="inline-flex w-full items-center justify-center rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background transition hover:bg-primary"
+        >
+          View Profile
+        </button>
+      </div>
     </motion.article>
   );
 }
