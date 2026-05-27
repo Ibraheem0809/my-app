@@ -1,5 +1,3 @@
-// components/cards/TutorCard.tsx
-
 "use client";
 
 import Image from "next/image";
@@ -8,7 +6,7 @@ import { motion } from "framer-motion";
 
 import { Star, MapPin, Clock, BookOpen } from "lucide-react";
 
-import type { Tutor } from "@/data/tutors";
+import type { Tutor } from "@/types/tutor";
 
 interface TutorCardProps {
   tutor: Tutor;
@@ -77,7 +75,7 @@ export default function TutorCard({ tutor, onView }: TutorCardProps) {
 
         <li className="flex items-center gap-2">
           <Clock className="h-4 w-4 text-accent" />
-          {tutor.timings}
+          {tutor.timing}
         </li>
 
         <li className="flex items-center gap-2">

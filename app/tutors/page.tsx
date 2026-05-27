@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -14,19 +14,15 @@ import {
   X,
 } from "lucide-react";
 
-import { tutors, type Tutor } from "@/data/tutors";
-
 import { PageHero } from "@/components/ui/PageHero";
 
 import TutorCard from "@/components/tutors/TutorCard";
 
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 
-const allSubjects = Array.from(
-  new Set(tutors.flatMap((t) => t.subjects))
-).sort();
+import type { Tutor } from "@/types/tutor";
 
-const allAreas = Array.from(new Set(tutors.flatMap((t) => t.areas))).sort();
+import { getTutors } from "@/services/tutor.service";
 
 const allClasses = [
   "1",
@@ -76,6 +72,10 @@ function Select({
 }
 
 export default function TutorsPage() {
+  const [tutors, setTutors] = useState<Tutor[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
   const [q, setQ] = useState("");
   const [subject, setSubject] = useState("");
   const [cls, setCls] = useState("");
@@ -85,26 +85,53 @@ export default function TutorsPage() {
 
   const [active, setActive] = useState<Tutor | null>(null);
 
+  useEffect(() => {
+    const fetchTutors = async () => {
+      try {
+        setLoading(true);
+
+        const data = await getTutors();
+
+        setTutors(data);
+      } catch (err) {
+        console.error(err);
+        setError("Failed to load tutors");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTutors();
+  }, []);
+
+  const allSubjects = useMemo(() => {
+    return Array.from(new Set(tutors.flatMap((t) => t.subjects || []))).sort();
+  }, [tutors]);
+
+  const allAreas = useMemo(() => {
+    return Array.from(new Set(tutors.flatMap((t) => t.areas || []))).sort();
+  }, [tutors]);
+
   const filtered = useMemo(() => {
     return tutors.filter((t) => {
       if (
         q &&
-        !`${t.name} ${t.subjects.join(" ")} ${t.areas.join(" ")}`
+        !`${t.name} ${t.subjects?.join(" ")} ${t.areas?.join(" ")}`
           .toLowerCase()
           .includes(q.toLowerCase())
       ) {
         return false;
       }
 
-      if (subject && !t.subjects.includes(subject)) {
+      if (subject && !t.subjects?.includes(subject)) {
         return false;
       }
 
-      if (cls && !t.classes.includes(cls)) {
+      if (cls && !t.classes?.includes(cls)) {
         return false;
       }
 
-      if (area && !t.areas.includes(area)) {
+      if (area && !t.areas?.includes(area)) {
         return false;
       }
 
@@ -112,13 +139,13 @@ export default function TutorsPage() {
         return false;
       }
 
-      if (board && !t.boards.includes(board)) {
+      if (board && !t.boards?.includes(board)) {
         return false;
       }
 
       return true;
     });
-  }, [q, subject, cls, area, avail, board]);
+  }, [tutors, q, subject, cls, area, avail, board]);
 
   const clear = () => {
     setQ("");
@@ -202,44 +229,61 @@ export default function TutorsPage() {
             )}
           </div>
 
-          {/* COUNT */}
-          <div className="mt-8 text-sm text-muted-foreground">
-            {filtered.length} tutor
-            {filtered.length === 1 ? "" : "s"} found
-          </div>
+          {/* LOADING */}
+          {loading && (
+            <div className="mt-10 text-center text-muted-foreground">
+              Loading tutors...
+            </div>
+          )}
 
-          {/* GRID */}
-          <motion.div
-            layout
-            className="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
-          >
-            <AnimatePresence mode="popLayout">
-              {filtered.map((t) => (
-                <motion.div
-                  key={t.id}
-                  layout
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <TutorCard tutor={t} onView={setActive} />
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </motion.div>
+          {/* ERROR */}
+          {error && (
+            <div className="mt-10 text-center text-red-500">{error}</div>
+          )}
 
-          {filtered.length === 0 && (
-            <p className="mt-12 text-center text-muted-foreground">
-              No tutors match these filters.
-            </p>
+          {/* CONTENT */}
+          {!loading && !error && (
+            <>
+              {/* COUNT */}
+              <div className="mt-8 text-sm text-muted-foreground">
+                {filtered.length} tutor
+                {filtered.length === 1 ? "" : "s"} found
+              </div>
+
+              {/* GRID */}
+              <motion.div
+                layout
+                className="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+              >
+                <AnimatePresence mode="popLayout">
+                  {filtered.map((t) => (
+                    <motion.div
+                      key={t._id}
+                      layout
+                      initial={{ opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <TutorCard tutor={t} onView={setActive} />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </motion.div>
+
+              {filtered.length === 0 && (
+                <p className="mt-12 text-center text-muted-foreground">
+                  No tutors match these filters.
+                </p>
+              )}
+            </>
           )}
         </div>
       </section>
 
       {/* MODAL */}
       <Dialog open={!!active} onOpenChange={(o) => !o && setActive(null)}>
-        <DialogContent className="max-w-lg border-0 bg-white p-0 overflow-hidden rounded-3xl">
+        <DialogContent className="max-w-lg overflow-hidden rounded-3xl border-0 bg-white p-0">
           {active && (
             <div className="p-6">
               <div className="flex items-center gap-4">
@@ -264,7 +308,7 @@ export default function TutorsPage() {
                 <p className="leading-7 text-muted-foreground">{active.bio}</p>
 
                 <div className="flex flex-wrap gap-1.5">
-                  {active.subjects.map((s) => (
+                  {active.subjects?.map((s) => (
                     <span
                       key={s}
                       className="rounded-full bg-primary/10 px-2.5 py-1 text-xs text-primary"
@@ -287,18 +331,18 @@ export default function TutorsPage() {
 
                   <li className="flex items-center gap-2">
                     <GraduationCap className="h-4 w-4 text-accent" />
-                    Classes {active.classes.join(", ")} ·{" "}
-                    {active.boards.join(", ")}
+                    Classes {active.classes?.join(", ")} ·{" "}
+                    {active.boards?.join(", ")}
                   </li>
 
                   <li className="flex items-center gap-2">
                     <Clock className="h-4 w-4 text-accent" />
-                    {active.timings}
+                    {active.timing}
                   </li>
 
                   <li className="flex items-center gap-2">
                     <MapPin className="h-4 w-4 text-accent" />
-                    {active.areas.join(", ")}
+                    {active.areas?.join(", ")}
                   </li>
                 </ul>
 

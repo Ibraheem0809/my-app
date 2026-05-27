@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Link from "next/link";
 
@@ -12,12 +12,33 @@ import SectionHeading from "@/components/ui/SectionHeading";
 
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 
-import { tutors, type Tutor } from "@/data/tutors";
+import { getTutors } from "@/services/tutor.service";
+
+import type { Tutor } from "@/types/tutor";
 
 export default function TopTutors() {
-  const topTutors = tutors.slice(0, 3);
+  const [tutors, setTutors] = useState<Tutor[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const [active, setActive] = useState<Tutor | null>(null);
+
+  useEffect(() => {
+    const fetchTutors = async () => {
+      try {
+        const data = await getTutors();
+
+        setTutors(data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTutors();
+  }, []);
+
+  const topTutors = tutors.slice(0, 3);
 
   return (
     <>
@@ -29,11 +50,17 @@ export default function TopTutors() {
             description="Hand-picked tutors with proven results across Prayagraj."
           />
 
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 ">
-            {topTutors.map((tutor) => (
-              <TutorCard key={tutor.id} tutor={tutor} onView={setActive} />
-            ))}
-          </div>
+          {loading ? (
+            <div className="mt-12 text-center text-muted-foreground">
+              Loading tutors...
+            </div>
+          ) : (
+            <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {topTutors.map((tutor) => (
+                <TutorCard key={tutor._id} tutor={tutor} onView={setActive} />
+              ))}
+            </div>
+          )}
 
           <div className="mt-10 text-center">
             <Link
@@ -46,7 +73,6 @@ export default function TopTutors() {
         </div>
       </section>
 
-      {/* MODAL */}
       <Dialog open={!!active} onOpenChange={(o) => !o && setActive(null)}>
         <DialogContent className="max-w-lg overflow-hidden rounded-3xl border-0 bg-white p-0">
           {active && (
@@ -102,7 +128,7 @@ export default function TopTutors() {
 
                   <li className="flex items-center gap-2">
                     <Clock className="h-4 w-4 text-accent" />
-                    {active.timings}
+                    {active.timing}
                   </li>
 
                   <li className="flex items-center gap-2">

@@ -1,10 +1,12 @@
 "use client";
 
 import Image from "next/image";
+
 import { motion } from "framer-motion";
+
 import { MapPin, UserCheck } from "lucide-react";
 
-import type { Student } from "@/data/students";
+import type { Student } from "@/types/student";
 
 interface StudentCardProps {
   s?: Student;
@@ -27,7 +29,7 @@ export default function StudentCard({ s, student }: StudentCardProps) {
       }}
       className="flex flex-col rounded-3xl border border-border/60 bg-white p-5 shadow-soft"
     >
-      {/* Top */}
+      {/* TOP */}
       <div className="flex items-center gap-3">
         <div className="relative h-14 w-14 overflow-hidden rounded-2xl bg-muted">
           <Image
@@ -50,9 +52,9 @@ export default function StudentCard({ s, student }: StudentCardProps) {
         </div>
       </div>
 
-      {/* Subjects */}
+      {/* SUBJECTS */}
       <div className="mt-4 flex flex-wrap gap-1.5">
-        {data.subjects.map((subject) => (
+        {data.subject?.map((subject) => (
           <span
             key={subject}
             className="rounded-full bg-accent/10 px-2 py-0.5 text-[11px] text-accent"
@@ -62,15 +64,17 @@ export default function StudentCard({ s, student }: StudentCardProps) {
         ))}
       </div>
 
-      {/* Details */}
+      {/* DETAILS */}
       <div className="mt-4 space-y-1.5 text-xs text-muted-foreground">
         <div className="flex items-center gap-1.5">
           <MapPin className="h-3.5 w-3.5 shrink-0" />
+
           <span>{data.location}</span>
         </div>
 
         <div className="flex items-center gap-1.5">
           <UserCheck className="h-3.5 w-3.5 shrink-0" />
+
           <span>Mentored by {data.mentor}</span>
         </div>
       </div>
