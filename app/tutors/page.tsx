@@ -18,7 +18,7 @@ import { PageHero } from "@/components/ui/PageHero";
 
 import TutorCard from "@/components/tutors/TutorCard";
 
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { DialogTitle, Dialog, DialogContent } from "@/components/ui/dialog";
 
 import type { Tutor } from "@/types/tutor";
 
@@ -286,6 +286,11 @@ export default function TutorsPage() {
         <DialogContent className="max-w-lg overflow-hidden rounded-3xl border-0 bg-white p-0">
           {active && (
             <div className="p-6">
+              {/* Accessibility Title */}
+              <DialogTitle className="sr-only">
+                {active.name} Tutor Profile
+              </DialogTitle>
+
               <div className="flex items-center gap-4">
                 <img
                   src={active.photo}

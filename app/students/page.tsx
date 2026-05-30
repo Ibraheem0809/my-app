@@ -254,18 +254,13 @@ export default function StudentsPage() {
                         </li>
 
                         <li className="flex items-center gap-2">
-                          <MapPin className="h-4 w-4 text-accent" />
-                          {student.location}
-                        </li>
-
-                        <li className="flex items-center gap-2">
-                          <User className="h-4 w-4 text-accent" />
-                          Mentor: {student.mentor}
-                        </li>
-
-                        <li className="flex items-center gap-2">
                           <BookOpen className="h-4 w-4 text-accent" />
                           {student.subject?.length} Subjects
+                        </li>
+
+                        <li className="flex items-center gap-2">
+                          <MapPin className="h-4 w-4 text-accent" />
+                          {student.location}
                         </li>
                       </ul>
                     </motion.div>

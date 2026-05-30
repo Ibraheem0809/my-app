@@ -12,17 +12,17 @@ import GridBackground from "@/components/ui/GridBackground";
 const stats = [
   {
     icon: Users,
-    value: "200+",
+    value: "50+",
     label: "Students",
   },
   {
     icon: GraduationCap,
-    value: "50+",
+    value: "25+",
     label: "Tutors",
   },
   {
     icon: MapPin,
-    value: "20+",
+    value: "15+",
     label: "Areas Covered",
   },
 ];
@@ -96,7 +96,7 @@ export default function Hero() {
           {/* Badge */}
           <span className="glass inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-medium text-[var(--primary)]">
             <span className="h-2 w-2 animate-pulse rounded-full bg-[var(--accent)]" />
-            Trusted in Prayagraj since 2018
+            Trusted in Prayagraj since 2024
           </span>
 
           {/* Heading */}

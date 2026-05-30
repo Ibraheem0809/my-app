@@ -133,19 +133,19 @@ export default function Footer() {
             <li className="flex gap-3">
               <MapPin className="mt-0.5 h-4 w-4 text-primary" />
 
-              <span>Civil Lines, Prayagraj, UP 211001</span>
+              <span>Kamala Lounge, Jhalwa, Prayagraj, UP 211012</span>
             </li>
 
             <li className="flex gap-3">
               <Phone className="mt-0.5 h-4 w-4 text-primary" />
 
-              <span>+91 98765 43210</span>
+              <span>+91 83037 70035</span>
             </li>
 
             <li className="flex gap-3">
               <Mail className="mt-0.5 h-4 w-4 text-primary" />
 
-              <span>hello@satwikhometutorial.in</span>
+              <span>satwikhometutorials@gmail.com</span>
             </li>
           </ul>
         </div>
